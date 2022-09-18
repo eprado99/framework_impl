@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 # Gradient Descent will be our optimization algorithm, we will need a cost function to gauge accuracy in each iteration.
 # We require direction (go to local minima or local maximum) and learning rate (alpha)
 # Learning rate is the size of the steps that are taken to reach the min.
@@ -10,6 +12,11 @@ import pandas as pd
 df = pd.read_csv('EstaturaPeso_HM.csv')
 # drop data corresponding to female columns to focus in only one
 df = df.drop(['M_estat', 'M_peso'], axis = 1)
+
+X = np.array(df['H_estat']).reshape(-1, 1)
+y = np.array(df['H_peso']).reshape(-1, 1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25)
 
 # Cost function
 def mse(y, pred, y_size):
@@ -45,21 +52,14 @@ def abline(slope, intercept):
 
 m = 0
 b = 0
-for i in range(1000):
+for i in range(3000):
     print(i)
-    m, b = grad_descent(m, b, df, 0.01)
+    m, b = grad_descent(m, b, df, 0.2)
 
 plt.scatter(df.H_estat, df.H_peso, color = 'blue')
 abline(m, b)
 plt.show()
 
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-
-X = np.array(df['H_estat']).reshape(-1, 1)
-y = np.array(df['H_peso']).reshape(-1, 1)
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25)
 
 regr = LinearRegression()
 
@@ -70,5 +70,3 @@ plt.scatter(X_test, y_test, color ='b')
 plt.plot(X_test, y_pred, color ='k')
 
 plt.show()
-
-
